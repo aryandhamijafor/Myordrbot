@@ -1,10 +1,13 @@
 import requests
-from telegram.ext import ApplicationBuilder, CommandHandler
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 BOT_TOKEN = "8557923203:AAEvQ_NEdAKTPiRrqoxPEWfvU-ihlWBpiCM"
 API_URL = "https://getsolditems-mvuynfmg6a-uc.a.run.app"
 
-async def topsellers(update, context):
+async def start(update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Welcome! Use /topsellers or /slowmovers to test.")
+
+async def topsellers(update, context: ContextTypes.DEFAULT_TYPE):
     try:
         response = requests.post(API_URL).json()
         items = sorted(response["data"], key=lambda x: x["Sold"], reverse=True)[:3]
@@ -13,7 +16,7 @@ async def topsellers(update, context):
     except Exception as e:
         await update.message.reply_text(f"Error fetching data: {e}")
 
-async def slowmovers(update, context):
+async def slowmovers(update, context: ContextTypes.DEFAULT_TYPE):
     try:
         response = requests.post(API_URL).json()
         items = [i for i in response["data"] if i["Sold"] < 10]
@@ -24,9 +27,6 @@ async def slowmovers(update, context):
         await update.message.reply_text(f"Slow movers (under 10 sales):\n{msg}")
     except Exception as e:
         await update.message.reply_text(f"Error fetching data: {e}")
-
-async def start(update, context):
-    await update.message.reply_text("Welcome! Use /topsellers or /slowmovers to test.")
 
 def main():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
