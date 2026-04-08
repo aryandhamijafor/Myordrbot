@@ -37,3 +37,20 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+import asyncio
+
+def main():
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("topsellers", topsellers))
+    app.add_handler(CommandHandler("slowmovers", slowmovers))
+
+    # Explicitly create and set an event loop for Python 3.14+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    app.run_polling()
+
+if __name__ == "__main__":
+    main()
